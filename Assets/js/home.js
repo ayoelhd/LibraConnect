@@ -1,63 +1,71 @@
-const featuredBooks = [
+// ===========================
+// Featured Books Data
+// ===========================
+const books = [
     {
-        title: "The Silent Library",
-        author: "Mark Jenson",
-        image: "assets/images/book1.jpg",
-        description: "A mysterious story inside an abandoned library. A full description goes here..."
+        title: "The Silent Forest",
+        author: "John Mason",
+        description: "A thrilling mystery novel about a detective who uncovers secrets hidden deep within an ancient forest.",
+        image: "assets/images/book1.jpg"
     },
     {
-        title: "Digital Wisdom",
-        author: "Sarah Milton",
-        image: "assets/images/book2.jpg",
-        description: "A journey through the world of data and AI. This is the full description..."
+        title: "The Lost City",
+        author: "Sarah Collins",
+        description: "An adventure story following a group of explorers searching for a forgotten city buried under desert sands.",
+        image: "assets/images/book2.jpg"
     },
     {
-        title: "Lost Pages",
-        author: "Tom Richards",
-        image: "assets/images/book3.jpg",
-        description: "An adventure where every page hides a clue that leads to another mystery..."
+        title: "Beyond the Stars",
+        author: "Michael Turner",
+        description: "A sci-fi journey through galaxies as a crew faces strange creatures and uncovers cosmic mysteries.",
+        image: "assets/images/book3.jpg"
     }
 ];
 
+// ===========================
+// Render Books in Responsive Cards
+// ===========================
 const container = document.getElementById("featuredBooks");
 
-// Render cards (no Read More yet)
-featuredBooks.forEach((book, index) => {
+books.forEach(book => {
     container.innerHTML += `
-        <div class="col-md-4 mb-3">
-            <div class="card shadow">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
                 <img src="${book.image}" class="card-img-top" alt="${book.title}">
-                <div class="card-body">
-                    <h4>${book.title}</h4>
-                    <p><strong>Author:</strong> ${book.author}</p>
-                    <p id="desc-${index}">
-                        ${book.description.substring(0, 50)}...
-                    </p>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${book.title}</h5>
+
+                    <p class="card-text short-text">${book.description.substring(0, 80)}...</p>
+                    <p class="card-text full-text d-none">${book.description}</p>
+
+                    <button class="btn btn-primary mt-auto read-more-btn">Read More</button>
                 </div>
             </div>
         </div>
     `;
 });
 
-// Add Read More / Read Less button + interaction
-featuredBooks.forEach((book, index) => {
-    const cardBody = document.getElementsByClassName("card-body")[index];
+// ===========================
+// Read More / Read Less Button
+// ===========================
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("read-more-btn")) {
 
-    // Add button
-    const btn = document.createElement("button");
-    btn.className = "btn btn-primary btn-sm";
-    btn.textContent = "Read More";
-    cardBody.appendChild(btn);
+        const card = e.target.closest(".card-body");
+        const shortText = card.querySelector(".short-text");
+        const fullText = card.querySelector(".full-text");
 
-    const desc = document.getElementById(`desc-${index}`);
-
-    btn.addEventListener("click", () => {
-        if (btn.textContent === "Read More") {
-            desc.textContent = book.description;
-            btn.textContent = "Read Less";
+        if (fullText.classList.contains("d-none")) {
+            // Show full text
+            fullText.classList.remove("d-none");
+            shortText.classList.add("d-none");
+            e.target.textContent = "Read Less";
         } else {
-            desc.textContent = book.description.substring(0, 50) + "...";
-            btn.textContent = "Read More";
+            // Hide full text
+            fullText.classList.add("d-none");
+            shortText.classList.remove("d-none");
+            e.target.textContent = "Read More";
         }
-    });
+    }
 });
+
