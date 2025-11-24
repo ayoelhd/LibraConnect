@@ -1,0 +1,23 @@
+/* Cards full-width look */
+.clickable-card {
+    width: 100%;
+}
+
+/* Reveal details */
+.card-details {
+    display: none;
+    background: #f8f9fa;
+    border-top: 2px solid #0d6efd;
+}
+
+.show-card-details {
+    display: block;
+}
+
+/* Nice hover effect */
+.clickable-card:hover {
+    transform: scale(1.01);
+    transition: 0.15s ease-in-out;
+}
+
+

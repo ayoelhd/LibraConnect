@@ -70,14 +70,39 @@ borrowBtn.addEventListener("click", () => {
 
     if (checked.length === 0) {
         message.textContent = "Please select at least one book to borrow.";
+        message.classList.remove("text-success");
         message.classList.add("text-danger");
         return;
     }
 
+    // Get current borrowed books from localStorage
+    let borrowedBooks = JSON.parse(localStorage.getItem("selectedBooks")) || [];
+
+    // Add newly borrowed books
+    Array.from(checked).forEach(chk => {
+        const book = books[chk.dataset.index];
+        const borrowedBook = {
+            title: book.title,
+            author: book.author,
+            genre: book.genre,
+            image: book.img, // use 'image' for borrow history page
+            dateBorrowed: new Date().toLocaleDateString(),
+            dueDate: new Date(Date.now() + 14*24*60*60*1000).toLocaleDateString() // 2 weeks from now
+        };
+        borrowedBooks.push(borrowedBook);
+    });
+
+    // Save updated list back to localStorage
+    localStorage.setItem("selectedBooks", JSON.stringify(borrowedBooks));
+
+    // Confirmation message
     const borrowedTitles = Array.from(checked).map(chk => books[chk.dataset.index].title);
     message.textContent = `You borrowed: ${borrowedTitles.join(", ")}`;
     message.classList.remove("text-danger");
     message.classList.add("text-success");
+
+    // Uncheck all checked boxes
+    checked.forEach(chk => chk.checked = false);
 });
 
 // Event Listeners
