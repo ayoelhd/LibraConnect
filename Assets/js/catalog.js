@@ -111,3 +111,14 @@ genreFilter.addEventListener("change", updateList);
 
 // Initial load
 displayBooks(books);
+
+
+function loadInclude(id, file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => document.getElementById(id).innerHTML = data);
+        }
+
+        loadInclude("header", "includes/header.html");
+        loadInclude("menu", "includes/menu.html");
+        loadInclude("footer", "includes/footer.html");
