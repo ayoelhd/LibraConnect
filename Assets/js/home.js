@@ -1,30 +1,29 @@
-// ===========================
+
 // Featured Books Data
-// ===========================
+
 const books = [
     {
         title: "The Silent Forest",
         author: "John Mason",
         description: "A thrilling mystery novel about a detective who uncovers secrets hidden deep within an ancient forest.",
-        image: "assets/images/book1.jpg"
+        image: "Assets/images/book1.jpg"
     },
     {
         title: "The Lost City",
         author: "Sarah Collins",
         description: "An adventure story following a group of explorers searching for a forgotten city buried under desert sands.",
-        image: "assets/images/book2.jpg"
+        image: "Assets/images/book2.jpg"
     },
     {
         title: "Beyond the Stars",
         author: "Michael Turner",
         description: "A sci-fi journey through galaxies as a crew faces strange creatures and uncovers cosmic mysteries.",
-        image: "assets/images/book3.jpg"
+        image: "Assets/images/book3.jpg"
     }
 ];
 
-// ===========================
 // Render Books in Responsive Cards
-// ===========================
+
 const container = document.getElementById("featuredBooks");
 
 books.forEach(book => {
@@ -45,9 +44,9 @@ books.forEach(book => {
     `;
 });
 
-// ===========================
+
 // Read More / Read Less Button
-// ===========================
+
 document.addEventListener("click", function (e) {
     if (e.target.classList.contains("read-more-btn")) {
 
