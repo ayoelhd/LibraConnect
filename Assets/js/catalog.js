@@ -1,4 +1,4 @@
-// Sample Book Data
+// ================= SAMPLE BOOK DATA =================
 const books = [
     { title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "classic", img: "https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg" },
     { title: "1984", author: "George Orwell", genre: "fiction", img: "https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg" },
@@ -16,13 +16,16 @@ const books = [
     { title: "Gone Girl", author: "Gillian Flynn", genre: "mystery", img: "https://covers.openlibrary.org/b/isbn/9780307588371-L.jpg" }
 ];
 
+
+// ================= DOM ELEMENTS =================
 const bookList = document.getElementById("bookList");
 const searchInput = document.getElementById("searchInput");
 const genreFilter = document.getElementById("genreFilter");
 const borrowBtn = document.getElementById("borrowBtn");
 const message = document.getElementById("message");
 
-// Display books
+
+// ================= DISPLAY BOOKS =================
 function displayBooks(filteredBooks) {
     bookList.innerHTML = "";
 
@@ -34,13 +37,14 @@ function displayBooks(filteredBooks) {
     filteredBooks.forEach((book, index) => {
         bookList.innerHTML += `
             <div class="col-md-3">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-sm book-card">
                     <img src="${book.img}" class="card-img-top" alt="${book.title}">
                     <div class="card-body">
-                        <h5 class="card-title">${book.title}</h5>
+                        <h5 class="card-title book-title">${book.title}</h5>
                         <p class="text-muted">${book.author}</p>
                         <span class="badge bg-primary text-capitalize">${book.genre}</span>
-                        <div class="form-check mt-2">
+
+                        <div class="form-check mt-3">
                             <input type="checkbox" class="form-check-input borrow-check" data-index="${index}">
                             <label class="form-check-label">Borrow</label>
                         </div>
@@ -49,22 +53,48 @@ function displayBooks(filteredBooks) {
             </div>
         `;
     });
+
+    // Reattach checkbox listeners
+    attachCheckboxEvents();
 }
 
-// Filter function
+
+// ================= FILTER FUNCTION =================
 function updateList() {
     const query = searchInput.value.toLowerCase();
     const genre = genreFilter.value;
 
     const filtered = books.filter(book =>
-        (book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)) &&
+        (book.title.toLowerCase().includes(query) ||
+         book.author.toLowerCase().includes(query)) &&
         (genre === "all" || book.genre === genre)
     );
 
     displayBooks(filtered);
 }
 
-// Borrow button logic
+
+// ================= CHECKBOX CHANGE EVENT =================
+function attachCheckboxEvents() {
+    const checkboxes = document.querySelectorAll(".borrow-check");
+
+    checkboxes.forEach(chk => {
+        chk.addEventListener("change", () => {
+            const card = chk.closest(".card");
+
+            // Toggle highlight
+            card.classList.toggle("book-selected", chk.checked);
+
+            // Update selected count message
+            const selectedCount = document.querySelectorAll(".borrow-check:checked").length;
+            message.textContent = `Selected books: ${selectedCount}`;
+            message.classList.add("text-info");
+        });
+    });
+}
+
+
+// ================= BORROW BUTTON =================
 borrowBtn.addEventListener("click", () => {
     const checked = document.querySelectorAll(".borrow-check:checked");
 
@@ -75,50 +105,59 @@ borrowBtn.addEventListener("click", () => {
         return;
     }
 
-    // Get current borrowed books from localStorage
     let borrowedBooks = JSON.parse(localStorage.getItem("selectedBooks")) || [];
 
-    // Add newly borrowed books
-    Array.from(checked).forEach(chk => {
+    checked.forEach(chk => {
         const book = books[chk.dataset.index];
+
         const borrowedBook = {
             title: book.title,
             author: book.author,
             genre: book.genre,
-            image: book.img, // use 'image' for borrow history page
+            image: book.img,
             dateBorrowed: new Date().toLocaleDateString(),
-            dueDate: new Date(Date.now() + 14*24*60*60*1000).toLocaleDateString() // 2 weeks from now
+            dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString()
         };
+
         borrowedBooks.push(borrowedBook);
     });
 
-    // Save updated list back to localStorage
     localStorage.setItem("selectedBooks", JSON.stringify(borrowedBooks));
 
-    // Confirmation message
-    const borrowedTitles = Array.from(checked).map(chk => books[chk.dataset.index].title);
-    message.textContent = `You borrowed: ${borrowedTitles.join(", ")}`;
+    // Success message
+    message.textContent = `You borrowed: ${Array.from(checked).map(c => books[c.dataset.index].title).join(", ")}`;
     message.classList.remove("text-danger");
     message.classList.add("text-success");
 
-    // Uncheck all checked boxes
-    checked.forEach(chk => chk.checked = false);
+    // ============================
+    // Uncheck AND Unhighlight all
+    // ============================
+    checked.forEach(chk => {
+        const card = chk.closest(".card");
+        chk.checked = false;
+        card.classList.remove("book-selected");
+    });
+
+    // Reset selected count
+    message.textContent += " ✓";
 });
 
-// Event Listeners
+
+// ================= EVENT LISTENERS =================
 searchInput.addEventListener("input", updateList);
 genreFilter.addEventListener("change", updateList);
 
-// Initial load
+// Initial display
 displayBooks(books);
 
 
+// ================= INCLUDE HTML PARTIALS =================
 function loadInclude(id, file) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => document.getElementById(id).innerHTML = data);
-        }
+    fetch(file)
+        .then(response => response.text())
+        .then(data => document.getElementById(id).innerHTML = data);
+}
 
-        loadInclude("header", "includes/header.html");
-        loadInclude("menu", "includes/menu.html");
-        loadInclude("footer", "includes/footer.html");
+loadInclude("header", "includes/header.html");
+loadInclude("menu", "includes/menu.html");
+loadInclude("footer", "includes/footer.html");
